@@ -7,7 +7,7 @@ export type FormDocument = mongoose.HydratedDocument<Form>;
 export class Form {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FormTemplate' })
   formTemplate: mongoose.Types.ObjectId;
-  @Prop()
+  @Prop({ type: mongoose.Schema.Types.Map, of: mongoose.Schema.Types.String })
   formAnswers: Record<string, string>;
 }
 

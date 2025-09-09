@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Schema as MongoSchema } from 'mongoose';
 
 export type FormTemplateDocument = HydratedDocument<FormTemplate>;
 
@@ -7,7 +7,7 @@ export type FormTemplateDocument = HydratedDocument<FormTemplate>;
 export class FormTemplate {
   @Prop()
   name: string;
-  @Prop()
+  @Prop({ type: MongoSchema.Types.Map, of: MongoSchema.Types.String })
   validations: Record<string, string>;
 }
 
