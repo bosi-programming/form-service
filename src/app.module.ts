@@ -1,13 +1,15 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { FormsModule } from './forms/forms.module';
+import { FormResponseModule } from './form-response/form-responses.module';
 import { FormTemplateModule } from './form-template/form-template.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
-    FormsModule,
+    FormResponseModule,
     FormTemplateModule,
     MongooseModule.forRoot('mongodb://localhost:27017', {
       dbName: 'form-service',
@@ -16,8 +18,15 @@ import { MongooseModule } from '@nestjs/mongoose';
       retryWrites: true,
       autoCreate: true,
     }),
+    SentryModule.forRoot(),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: SentryGlobalFilter,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}

@@ -8,26 +8,27 @@ import { InjectModel } from '@nestjs/mongoose';
 @Injectable()
 export class FormTemplateService {
   constructor(
-    @InjectModel(FormTemplate.name) private formTemplateModel: Model<FormTemplate>,
+    @InjectModel(FormTemplate.name)
+    private formTemplateModel: Model<FormTemplate>,
   ) {}
   create(createFormTemplateDto: CreateFormTemplateDto) {
-    const formTemplate = new this.formTemplateModel({ name: 'test' });
+    const formTemplate = new this.formTemplateModel(createFormTemplateDto);
     return formTemplate.save();
   }
 
   findAll() {
-    return `This action returns all formTemplate`;
+    return this.formTemplateModel.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} formTemplate`;
+  findOne(id: string) {
+    return this.formTemplateModel.findById(id);
   }
 
-  update(id: number, updateFormTemplateDto: UpdateFormTemplateDto) {
-    return `This action updates a #${id} formTemplate`;
+  update(id: string, updateFormTemplateDto: UpdateFormTemplateDto) {
+    return this.formTemplateModel.findByIdAndUpdate(id, updateFormTemplateDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} formTemplate`;
+  remove(id: string) {
+    return this.formTemplateModel.findByIdAndDelete(id);
   }
 }

@@ -6,6 +6,8 @@ export type FormTemplateDocument = HydratedDocument<FormTemplate>;
 @Schema()
 export class FormTemplate {
   @Prop()
+  owner: string;
+  @Prop()
   name: string;
   @Prop({ type: MongoSchema.Types.Map, of: MongoSchema.Types.String })
   validations: Record<string, string>;
