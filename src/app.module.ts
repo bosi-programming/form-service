@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { FormResponseModule } from './form-response/form-responses.module';
 import { FormTemplateModule } from './form-template/form-template.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SentryGlobalFilter, SentryModule } from '@sentry/nestjs/setup';
+import { SentryModule } from '@sentry/nestjs/setup';
 import { APP_FILTER } from '@nestjs/core';
 import { OwnerModule } from './owner/owner.module';
+import { CatchEverythingFilter } from './filters/catch-everything.filter';
 
 @Module({
   imports: [
@@ -26,9 +27,9 @@ import { OwnerModule } from './owner/owner.module';
   providers: [
     {
       provide: APP_FILTER,
-      useClass: SentryGlobalFilter,
+      useClass: CatchEverythingFilter,
     },
     AppService,
   ],
 })
-export class AppModule { }
+export class AppModule {}

@@ -17,7 +17,7 @@ export class FormTemplateController {
 
   @Post()
   create(@Body() createFormTemplateDto: CreateFormTemplateDto) {
-      return this.formTemplateService.create(createFormTemplateDto);
+    return this.formTemplateService.create(createFormTemplateDto);
   }
 
   @Get()
@@ -27,7 +27,7 @@ export class FormTemplateController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-      return this.formTemplateService.findOne(id);
+    return this.formTemplateService.findOne(id);
   }
 
   @Patch(':id')
@@ -35,11 +35,11 @@ export class FormTemplateController {
     @Param('id') id: string,
     @Body() updateFormTemplateDto: UpdateFormTemplateDto,
   ) {
-      return this.formTemplateService.update(id, updateFormTemplateDto);
+    return this.formTemplateService.update(id, updateFormTemplateDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-      return this.formTemplateService.remove(id);
+    return this.formTemplateService.remove(id);
   }
 }
