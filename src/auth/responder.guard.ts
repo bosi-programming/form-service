@@ -10,12 +10,12 @@ import { Request } from 'express';
 import { Owner } from 'src/owner/entities/owner.entity';
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class ResponderGuard implements CanActivate {
   constructor(private jwtService: JwtService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromHeader(request);
+    const token = this.extractResponderTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException();
     }
@@ -25,15 +25,14 @@ export class AuthGuard implements CanActivate {
       });
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      request['user'] = payload;
+      request['owner'] = payload;
     } catch {
       throw new UnauthorizedException();
     }
     return true;
   }
 
-  private extractTokenFromHeader(request: Request): string | undefined {
-    const [type, token] = request.headers.authorization?.split(' ') ?? [];
-    return type === 'Bearer' ? token : undefined;
+  private extractResponderTokenFromHeader(request: Request): string | undefined {
+    return request.headers.responder as string | undefined;
   }
 }

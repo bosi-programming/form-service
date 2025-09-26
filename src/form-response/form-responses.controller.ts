@@ -6,15 +6,18 @@ import {
   Patch,
   Param,
   Delete,
+  UseGuards,
 } from '@nestjs/common';
 import { FormResponseService } from './form-responses.service';
 import { CreateFormResponseDto } from './dto/create-form-response.dto';
 import { UpdateFormResponseDto } from './dto/update-form-response.dto';
+import { ResponderGuard } from 'src/auth/responder.guard';
 
 @Controller('form-response')
 export class FormResponseController {
   constructor(private readonly formsService: FormResponseService) {}
 
+  @UseGuards(ResponderGuard)
   @Post()
   create(@Body() createFormResponseDto: CreateFormResponseDto) {
     return this.formsService.create(createFormResponseDto);

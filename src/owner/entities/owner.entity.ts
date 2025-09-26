@@ -6,9 +6,11 @@ export type OwnerDocument = HydratedDocument<Owner>;
 @Schema()
 export class Owner {
   @Prop()
-  token: string;
+  responderToken: string;
   @Prop()
   name: string;
+  @Prop()
+  password: string;
 }
 
 export const OwnerSchema = SchemaFactory.createForClass(Owner);

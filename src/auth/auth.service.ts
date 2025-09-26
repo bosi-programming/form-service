@@ -6,15 +6,16 @@ import { OwnerService } from 'src/owner/owner.service';
 export class AuthService {
   constructor(
     private ownerService: OwnerService,
-    private jwtService: JwtService
-  ) {}
+    private jwtService: JwtService,
+  ) { }
 
   async signIn(
     username: string,
     pass: string,
   ): Promise<{ access_token: string }> {
     const owner = await this.ownerService.findOne(username);
-    if (owner?.token !== pass) {
+    // TODO: Decript password
+    if (owner?.password !== pass) {
       throw new UnauthorizedException();
     }
     const payload = { sub: owner._id, name: owner.name };
@@ -23,4 +24,3 @@ export class AuthService {
     };
   }
 }
-
