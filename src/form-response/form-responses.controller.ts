@@ -12,14 +12,19 @@ import { FormResponseService } from './form-responses.service';
 import { CreateFormResponseDto } from './dto/create-form-response.dto';
 import { UpdateFormResponseDto } from './dto/update-form-response.dto';
 import { ResponderGuard } from 'src/auth/responder.guard';
+import { GetOwner } from 'src/decorators/owner.decorator';
+import { Owner } from 'src/owner/entities/owner.entity';
 
 @Controller('form-response')
 export class FormResponseController {
-  constructor(private readonly formsService: FormResponseService) {}
+  constructor(private readonly formsService: FormResponseService) { }
 
   @UseGuards(ResponderGuard)
   @Post()
-  create(@Body() createFormResponseDto: CreateFormResponseDto) {
+  create(
+    @Body() createFormResponseDto: CreateFormResponseDto,
+    @GetOwner() owner: Owner,
+  ) {
     return this.formsService.create(createFormResponseDto);
   }
 
