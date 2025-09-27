@@ -8,6 +8,8 @@ import { SentryModule } from '@sentry/nestjs/setup';
 import { APP_FILTER } from '@nestjs/core';
 import { OwnerModule } from './owner/owner.module';
 import { CatchEverythingFilter } from './filters/catch-everything.filter';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from './auth/constants';
 
 @Module({
   imports: [
@@ -21,6 +23,10 @@ import { CatchEverythingFilter } from './filters/catch-everything.filter';
       retryWrites: true,
       autoCreate: true,
     }),
+    JwtModule.register({
+      global: true,
+      secret: jwtConstants.secret,
+    }),
     SentryModule.forRoot(),
   ],
   controllers: [AppController],
@@ -32,4 +38,4 @@ import { CatchEverythingFilter } from './filters/catch-everything.filter';
     AppService,
   ],
 })
-export class AppModule {}
+export class AppModule { }

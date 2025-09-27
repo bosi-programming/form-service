@@ -5,10 +5,10 @@ export type FormResponseDocument = mongoose.HydratedDocument<FormResponse>;
 
 @Schema()
 export class FormResponse {
-  @Prop()
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Owner' })
   owner: string;
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'FormResponseTemplate' })
-  formTemplate: mongoose.Types.ObjectId;
+  formTemplate: string;
   @Prop({ type: mongoose.Schema.Types.Map, of: mongoose.Schema.Types.String })
   formAnswers: Record<string, string>;
 }

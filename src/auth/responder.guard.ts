@@ -7,11 +7,11 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { Request } from 'express';
-import { Owner } from 'src/owner/entities/owner.entity';
+import { OwnerDocument } from 'src/owner/entities/owner.entity';
 
 @Injectable()
 export class ResponderGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(private jwtService: JwtService) { }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -20,7 +20,7 @@ export class ResponderGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync<Owner>(token, {
+      const payload = await this.jwtService.verifyAsync<OwnerDocument>(token, {
         secret: jwtConstants.secret,
       });
       // 💡 We're assigning the payload to the request object here
@@ -32,7 +32,9 @@ export class ResponderGuard implements CanActivate {
     return true;
   }
 
-  private extractResponderTokenFromHeader(request: Request): string | undefined {
+  private extractResponderTokenFromHeader(
+    request: Request,
+  ): string | undefined {
     return request.headers.responder as string | undefined;
   }
 }
