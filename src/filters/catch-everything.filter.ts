@@ -7,10 +7,11 @@ import {
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
 import { SentryExceptionCaptured } from '@sentry/nestjs';
+import { Request } from 'express';
 
 @Catch()
 export class CatchEverythingFilter implements ExceptionFilter {
-  constructor(private readonly httpAdapterHost: HttpAdapterHost) {}
+  constructor(private readonly httpAdapterHost: HttpAdapterHost) { }
 
   @SentryExceptionCaptured()
   catch(exception: unknown, host: ArgumentsHost): void {
@@ -28,8 +29,10 @@ export class CatchEverythingFilter implements ExceptionFilter {
     const responseBody = {
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
-      path: httpAdapter.getRequestUrl(ctx.getRequest()),
+      path: httpAdapter.getRequestUrl(ctx.getRequest<Request>()) as string,
     };
+
+    console.error(responseBody);
 
     httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
   }
