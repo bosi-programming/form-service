@@ -28,14 +28,18 @@ export class FormResponseService {
     return this.formResponseModel.findOne({ _id: id, owner: owner._id });
   }
 
-  update(
+  async update(
     id: string,
     updateFormResponseDto: UpdateFormResponseDto,
     owner: OwnerDocument,
   ) {
+    const currentFormResponse = await this.formResponseModel.findOne({
+      _id: id,
+      owner: owner._id,
+    });
     return this.formResponseModel.findOneAndUpdate(
       { _id: id, owner: owner._id },
-      updateFormResponseDto,
+      { ...currentFormResponse, ...updateFormResponseDto },
     );
   }
 
