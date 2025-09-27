@@ -28,18 +28,25 @@ export class FormTemplateService {
     return this.formTemplateModel.findOne({ _id: id, owner: owner._id });
   }
 
-  update(
+  async update(
     id: string,
     updateFormTemplateDto: UpdateFormTemplateDto,
     owner: OwnerDocument,
   ) {
+    const currentFormTemplate = await this.formTemplateModel.findOne({
+      _id: id,
+      owner: owner._id,
+    });
     return this.formTemplateModel.findOneAndUpdate(
       { _id: id, owner: owner._id },
-      updateFormTemplateDto,
+      {...currentFormTemplate, ...updateFormTemplateDto},
     );
   }
 
   remove(id: string, owner: OwnerDocument) {
-    return this.formTemplateModel.findOneAndDelete({_id: id, owner: owner._id});
+    return this.formTemplateModel.findOneAndDelete({
+      _id: id,
+      owner: owner._id,
+    });
   }
 }
