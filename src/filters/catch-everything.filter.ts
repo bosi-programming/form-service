@@ -30,6 +30,7 @@ export class CatchEverythingFilter implements ExceptionFilter {
       statusCode: httpStatus,
       timestamp: new Date().toISOString(),
       path: httpAdapter.getRequestUrl(ctx.getRequest<Request>()) as string,
+      message: (exception as Record<string, string>)?.response,
     };
 
     console.error(responseBody);

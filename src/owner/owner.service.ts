@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Owner } from './entities/owner.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -13,10 +13,18 @@ export class OwnerService {
     @InjectModel(Owner.name)
     private ownerModel: Model<Owner>,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
-  // TODO: Encript password and create responderToken
   async create(createOwnerDto: CreateOwnerDto) {
+    const ownerWithSameName = await this.ownerModel.findOne({
+      name: createOwnerDto.name,
+    });
+    if (ownerWithSameName) {
+      throw new HttpException(
+        'Invalid name, try again with a different name',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const encryptedPassword = encrypt(
       createOwnerDto.password,
       CRYPT_MASTER_KEY,
@@ -25,8 +33,7 @@ export class OwnerService {
       ...createOwnerDto,
       password: encryptedPassword,
     });
-    const savedOwner = await owner.save();
-    const responderToken = this.jwtService.signAsync(
+    const responderToken = await this.jwtService.signAsync(
       {
         owner: owner._id,
         name: owner.name,
@@ -34,10 +41,8 @@ export class OwnerService {
       },
       { expiresIn: '10y' },
     );
-    await this.ownerModel.findOneAndUpdate(
-      { _id: savedOwner._id },
-      { ...savedOwner, responderToken },
-    );
+    owner.responderToken = responderToken;
+    const savedOwner = await owner.save();
     return {
       name: savedOwner.name,
       _id: savedOwner._id,
