@@ -36,6 +36,6 @@ export class OwnerGuard implements CanActivate {
   private extractResponderTokenFromHeader(
     request: Request,
   ): string | undefined {
-    return request.headers.responder as string | undefined;
+    return request.headers.owner as string | undefined;
   }
 }

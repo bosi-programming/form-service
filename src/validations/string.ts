@@ -11,10 +11,10 @@ export const stringValidator = (field: Field) => {
   const schema = z
     .string()
     .trim()
-    .min(min, {
+    .min(min || 0, {
       message: `This field needs to have at least ${min} characters`,
     })
-    .max(max, {
+    .max(max || 200, {
       message: `This field can't have more than ${max} characters`,
     })
     .optional()

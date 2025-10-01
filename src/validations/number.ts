@@ -11,8 +11,8 @@ export const numberValidator = (field: Field) => {
     .number({
       error: 'Required',
     })
-    .min(min, { message: `Must be at least ${min}` })
-    .max(max, { message: `Must be at most ${max}` });
+    .min(min || 0, { message: `Must be at least ${min}` })
+    .max(max || 200, { message: `Must be at most ${max}` });
 
   const schema = z
     .preprocess((val: unknown) => {

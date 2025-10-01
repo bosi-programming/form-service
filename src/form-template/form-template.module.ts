@@ -19,5 +19,6 @@ import { Owner, OwnerSchema } from 'src/owner/entities/owner.entity';
   ],
   controllers: [FormTemplateController],
   providers: [FormTemplateService],
+  exports: [FormTemplateService],
 })
 export class FormTemplateModule { }

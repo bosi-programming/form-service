@@ -8,6 +8,7 @@ import {
 } from './entities/form-response.entity';
 import { OwnerModule } from 'src/owner/owner.module';
 import { Owner, OwnerSchema } from 'src/owner/entities/owner.entity';
+import { FormTemplateModule } from 'src/form-template/form-template.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { Owner, OwnerSchema } from 'src/owner/entities/owner.entity';
       { name: Owner.name, schema: OwnerSchema },
     ]),
     OwnerModule,
+    FormTemplateModule,
   ],
   controllers: [FormResponseController],
   providers: [FormResponseService],
