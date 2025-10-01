@@ -4,7 +4,6 @@ import { UpdateFormTemplateDto } from './dto/update-form-template.dto';
 import { FormTemplate } from './entities/form-template.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { OwnerDocument } from 'src/owner/entities/owner.entity';
 
 @Injectable()
 export class FormTemplateService {
@@ -12,41 +11,41 @@ export class FormTemplateService {
     @InjectModel(FormTemplate.name)
     private formTemplateModel: Model<FormTemplate>,
   ) { }
-  create(createFormTemplateDto: CreateFormTemplateDto, owner: OwnerDocument) {
+  create(createFormTemplateDto: CreateFormTemplateDto, owner: string) {
     const formTemplate = new this.formTemplateModel({
       ...createFormTemplateDto,
-      owner: owner._id,
+      owner,
     });
     return formTemplate.save();
   }
 
-  findAll(owner: OwnerDocument) {
-    return this.formTemplateModel.find({ owner: owner._id });
+  findAll(owner: string) {
+    return this.formTemplateModel.find({ owner });
   }
 
-  findOne(id: string, owner: OwnerDocument) {
-    return this.formTemplateModel.findOne({ _id: id, owner: owner._id });
+  findOne(id: string, owner: string) {
+    return this.formTemplateModel.findOne({ _id: id, owner });
   }
 
   async update(
     id: string,
     updateFormTemplateDto: UpdateFormTemplateDto,
-    owner: OwnerDocument,
+    owner: string,
   ) {
     const currentFormTemplate = await this.formTemplateModel.findOne({
       _id: id,
-      owner: owner._id,
+      owner,
     });
     return this.formTemplateModel.findOneAndUpdate(
-      { _id: id, owner: owner._id },
-      {...currentFormTemplate, ...updateFormTemplateDto},
+      { _id: id, owner },
+      { ...currentFormTemplate, ...updateFormTemplateDto },
     );
   }
 
-  remove(id: string, owner: OwnerDocument) {
+  remove(id: string, owner: string) {
     return this.formTemplateModel.findOneAndDelete({
       _id: id,
-      owner: owner._id,
+      owner,
     });
   }
 }

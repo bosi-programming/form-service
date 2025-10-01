@@ -11,7 +11,6 @@ import {
 import { FormTemplateService } from './form-template.service';
 import { CreateFormTemplateDto } from './dto/create-form-template.dto';
 import { UpdateFormTemplateDto } from './dto/update-form-template.dto';
-import { type OwnerDocument } from 'src/owner/entities/owner.entity';
 import { GetOwner } from 'src/decorators/owner.decorator';
 import { OwnerGuard } from 'src/auth/owner.guard';
 
@@ -23,20 +22,20 @@ export class FormTemplateController {
   @Post()
   create(
     @Body() createFormTemplateDto: CreateFormTemplateDto,
-    @GetOwner() owner: OwnerDocument,
+    @GetOwner() owner: string,
   ) {
     return this.formTemplateService.create(createFormTemplateDto, owner);
   }
 
   @UseGuards(OwnerGuard)
   @Get()
-  findAll(@GetOwner() owner: OwnerDocument) {
+  findAll(@GetOwner() owner: string) {
     return this.formTemplateService.findAll(owner);
   }
 
   @UseGuards(OwnerGuard)
   @Get(':id')
-  findOne(@Param('id') id: string, @GetOwner() owner: OwnerDocument) {
+  findOne(@Param('id') id: string, @GetOwner() owner: string) {
     return this.formTemplateService.findOne(id, owner);
   }
 
@@ -45,14 +44,14 @@ export class FormTemplateController {
   update(
     @Param('id') id: string,
     @Body() updateFormTemplateDto: UpdateFormTemplateDto,
-    @GetOwner() owner: OwnerDocument,
+    @GetOwner() owner: string,
   ) {
     return this.formTemplateService.update(id, updateFormTemplateDto, owner);
   }
 
   @UseGuards(OwnerGuard)
   @Delete(':id')
-  remove(@Param('id') id: string, @GetOwner() owner: OwnerDocument) {
+  remove(@Param('id') id: string, @GetOwner() owner: string) {
     return this.formTemplateService.remove(id, owner);
   }
 }
