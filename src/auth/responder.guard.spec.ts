@@ -15,7 +15,7 @@ const token = jwtService.sign({
   level: 'responder',
 });
 const mockOwnerModule = {
-  findById: jest.fn().mockResolvedValue({ _id: owner, responderToken: token }), // or mockReturnValue(Promise.resolve(...))
+  findById: jest.fn().mockResolvedValue({ _id: owner, responderToken: token }),
 };
 
 describe('ResponderGuard', () => {

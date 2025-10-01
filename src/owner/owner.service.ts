@@ -3,8 +3,8 @@ import { Owner } from './entities/owner.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateOwnerDto } from './dto/create-owner.dto';
-import { encrypt } from 'src/auth/utils';
-import { cryptMasterKey } from 'src/auth/constants';
+import { encrypt } from '../auth/utils';
+import { cryptMasterKey } from '../auth/constants';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
@@ -46,7 +46,10 @@ export class OwnerService {
     return this.ownerModel.find();
   }
 
-  findOne(id: string) {
+  findById(id: string) {
     return this.ownerModel.findById(id);
+  }
+  findByName(name: string) {
+    return this.ownerModel.findOne({ name });
   }
 }

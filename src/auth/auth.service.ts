@@ -5,8 +5,8 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { OwnerService } from 'src/owner/owner.service';
-import { OwnerDocument } from 'src/owner/entities/owner.entity';
+import { OwnerService } from '../owner/owner.service';
+import { OwnerDocument } from '../owner/entities/owner.entity';
 import { decrypt } from './utils';
 import { cryptMasterKey } from './constants';
 
@@ -17,16 +17,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) { }
 
-  async signIn(
-    username: string,
-    pass: string,
-  ): Promise<{ access_token: string }> {
-    const owner = await this.ownerService.findOne(username);
-    // TODO: Decript password
-    if (owner?.password !== pass) {
+  async signIn(name: string, pass: string): Promise<{ access_token: string }> {
+    const owner = await this.ownerService.findByName(name);
+    if (!owner || decrypt(owner.password, cryptMasterKey) !== pass) {
       throw new UnauthorizedException();
     }
-    const payload = { owner: owner._id, name: owner.name };
+    const payload = { owner: owner._id, name: owner.name, level: 'owner' };
     return {
       access_token: await this.jwtService.signAsync(payload),
     };
@@ -40,7 +36,7 @@ export class AuthService {
       );
     }
 
-    const decriptedPassword = decrypt(owner.password,cryptMasterKey);
+    const decriptedPassword = decrypt(owner.password, cryptMasterKey);
 
     if (password !== decriptedPassword) {
       throw new HttpException(
