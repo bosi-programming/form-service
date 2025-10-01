@@ -7,7 +7,6 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { jwtConstants } from './constants';
 import { Request } from 'express';
-import { OwnerDocument } from 'src/owner/entities/owner.entity';
 
 @Injectable()
 export class ResponderGuard implements CanActivate {
@@ -20,12 +19,14 @@ export class ResponderGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync<OwnerDocument>(token, {
+      const payload = await this.jwtService.verifyAsync<{
+        owner: string;
+      }>(token, {
         secret: jwtConstants.secret,
       });
       // 💡 We're assigning the payload to the request object here
       // so that we can access it in our route handlers
-      request['owner'] = payload;
+      request['owner'] = payload.owner;
     } catch {
       throw new UnauthorizedException();
     }
