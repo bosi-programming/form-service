@@ -23,11 +23,14 @@ export class OwnerService {
       password: encryptedPassword,
     });
     const savedOwner = await owner.save();
-    const responderToken = this.jwtService.signAsync({
-      sub: owner._id,
-      name: owner.name,
-      level: 'responder',
-    }, {expiresIn: '10y'});
+    const responderToken = this.jwtService.signAsync(
+      {
+        owner: owner._id,
+        name: owner.name,
+        level: 'responder',
+      },
+      { expiresIn: '10y' },
+    );
     await this.ownerModel.findOneAndUpdate(
       { _id: savedOwner._id },
       { ...savedOwner, responderToken },

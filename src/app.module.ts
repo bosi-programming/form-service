@@ -10,12 +10,14 @@ import { OwnerModule } from './owner/owner.module';
 import { CatchEverythingFilter } from './filters/catch-everything.filter';
 import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from './auth/constants';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
     OwnerModule,
     FormResponseModule,
     FormTemplateModule,
+    AuthModule,
     MongooseModule.forRoot('mongodb://localhost:27017', {
       dbName: 'form-service',
       auth: { username: 'root', password: 'temp' },
