@@ -9,5 +9,6 @@ import { OwnerService } from './owner.service';
   ],
   controllers: [],
   providers: [OwnerService],
+  exports: [OwnerService],
 })
 export class OwnerModule { }
