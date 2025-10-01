@@ -2,11 +2,11 @@ import { Test } from '@nestjs/testing';
 import { ResponderGuard } from './responder.guard';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { getModelToken } from '@nestjs/mongoose';
+import { JWT_SECRET } from 'src/constants';
 
 const jwtService = new JwtService({
-  secret: jwtConstants.secret,
+  secret: JWT_SECRET,
 });
 const owner = 'id';
 const token = jwtService.sign({
@@ -26,7 +26,7 @@ describe('ResponderGuard', () => {
       imports: [
         JwtModule.register({
           global: true,
-          secret: jwtConstants.secret,
+          secret: JWT_SECRET,
         }),
       ],
       providers: [

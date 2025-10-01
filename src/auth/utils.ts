@@ -5,18 +5,18 @@ export const encrypt = (senha: string, masterKey: string) => {
 
   const salt = crypto.randomBytes(64);
 
-  const key = crypto.pbkdf2Sync(masterKey, salt, 2145, 32, "sha512");
+  const key = crypto.pbkdf2Sync(masterKey, salt, 2145, 32, 'sha512');
 
-  const cipher = crypto.createCipheriv("aes-256-gcm", key, iv);
+  const cipher = crypto.createCipheriv('aes-256-gcm', key, iv);
 
   const encrypted = Buffer.concat([
-    cipher.update(senha, "utf8"),
+    cipher.update(senha, 'utf8'),
     cipher.final(),
   ]);
 
   const tag = cipher.getAuthTag();
 
-  return Buffer.concat([salt, iv, tag, encrypted]).toString("base64");
+  return Buffer.concat([salt, iv, tag, encrypted]).toString('base64');
 };
 
 export function decrypt(encryptedPassword: string, masterKey: string) {

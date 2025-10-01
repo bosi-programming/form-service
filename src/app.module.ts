@@ -9,8 +9,8 @@ import { APP_FILTER } from '@nestjs/core';
 import { OwnerModule } from './owner/owner.module';
 import { CatchEverythingFilter } from './filters/catch-everything.filter';
 import { JwtModule } from '@nestjs/jwt';
-import { jwtConstants } from './auth/constants';
 import { AuthModule } from './auth/auth.module';
+import { DATABASE_PASSWORD, DATABASE_USER, JWT_SECRET } from './constants';
 
 @Module({
   imports: [
@@ -20,14 +20,14 @@ import { AuthModule } from './auth/auth.module';
     AuthModule,
     MongooseModule.forRoot('mongodb://localhost:27017', {
       dbName: 'form-service',
-      auth: { username: 'root', password: 'temp' },
+      auth: { username: DATABASE_USER, password: DATABASE_PASSWORD },
       appName: 'form-service',
       retryWrites: true,
       autoCreate: true,
     }),
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: JWT_SECRET,
     }),
     SentryModule.forRoot(),
   ],
@@ -40,4 +40,4 @@ import { AuthModule } from './auth/auth.module';
     AppService,
   ],
 })
-export class AppModule { }
+export class AppModule {}

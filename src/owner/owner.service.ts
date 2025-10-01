@@ -4,8 +4,8 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateOwnerDto } from './dto/create-owner.dto';
 import { encrypt } from '../auth/utils';
-import { cryptMasterKey } from '../auth/constants';
 import { JwtService } from '@nestjs/jwt';
+import { CRYPT_MASTER_KEY } from 'src/constants';
 
 @Injectable()
 export class OwnerService {
@@ -13,11 +13,14 @@ export class OwnerService {
     @InjectModel(Owner.name)
     private ownerModel: Model<Owner>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   // TODO: Encript password and create responderToken
   async create(createOwnerDto: CreateOwnerDto) {
-    const encryptedPassword = encrypt(createOwnerDto.password, cryptMasterKey);
+    const encryptedPassword = encrypt(
+      createOwnerDto.password,
+      CRYPT_MASTER_KEY,
+    );
     const owner = new this.ownerModel({
       ...createOwnerDto,
       password: encryptedPassword,

@@ -8,18 +8,18 @@ import { JwtService } from '@nestjs/jwt';
 import { OwnerService } from '../owner/owner.service';
 import { OwnerDocument } from '../owner/entities/owner.entity';
 import { decrypt } from './utils';
-import { cryptMasterKey } from './constants';
+import { CRYPT_MASTER_KEY } from 'src/constants';
 
 @Injectable()
 export class AuthService {
   constructor(
     private ownerService: OwnerService,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async signIn(name: string, pass: string): Promise<{ access_token: string }> {
     const owner = await this.ownerService.findByName(name);
-    if (!owner || decrypt(owner.password, cryptMasterKey) !== pass) {
+    if (!owner || decrypt(owner.password, CRYPT_MASTER_KEY) !== pass) {
       throw new UnauthorizedException();
     }
     const payload = { owner: owner._id, name: owner.name, level: 'owner' };
@@ -36,7 +36,7 @@ export class AuthService {
       );
     }
 
-    const decriptedPassword = decrypt(owner.password, cryptMasterKey);
+    const decriptedPassword = decrypt(owner.password, CRYPT_MASTER_KEY);
 
     if (password !== decriptedPassword) {
       throw new HttpException(

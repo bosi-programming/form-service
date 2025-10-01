@@ -1,13 +1,13 @@
 import { Test } from '@nestjs/testing';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { cryptMasterKey, jwtConstants } from './constants';
 import { AuthService } from './auth.service';
 import { encrypt } from './utils';
 import { OwnerService } from '../owner/owner.service';
+import { CRYPT_MASTER_KEY, JWT_SECRET } from 'src/constants';
 
 const jwtService = new JwtService({
-  secret: jwtConstants.secret,
+  secret: JWT_SECRET,
 });
 const owner = 'id';
 const name = 'name';
@@ -20,7 +20,7 @@ const mockOwnerModule = {
   findByName: jest.fn().mockResolvedValue({
     _id: owner,
     responderToken: token,
-    password: encrypt('1234', cryptMasterKey),
+    password: encrypt('1234', CRYPT_MASTER_KEY),
   }),
 };
 
@@ -32,7 +32,7 @@ describe('ResponderGuard', () => {
       imports: [
         JwtModule.register({
           global: true,
-          secret: jwtConstants.secret,
+          secret: JWT_SECRET,
         }),
       ],
       providers: [

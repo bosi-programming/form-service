@@ -5,11 +5,11 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from './constants';
 import { Request } from 'express';
 import { Owner } from '../owner/entities/owner.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { JWT_SECRET } from 'src/constants';
 
 @Injectable()
 export class ResponderGuard implements CanActivate {
@@ -17,7 +17,7 @@ export class ResponderGuard implements CanActivate {
     private jwtService: JwtService,
     @InjectModel(Owner.name)
     private ownerModel: Model<Owner>,
-  ) { }
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
@@ -30,7 +30,7 @@ export class ResponderGuard implements CanActivate {
         owner: string;
         level: string;
       }>(token, {
-        secret: jwtConstants.secret,
+        secret: JWT_SECRET,
       });
       const owner = await this.ownerModel.findById(payload.owner);
       if (
