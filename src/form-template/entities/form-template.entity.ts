@@ -12,6 +12,8 @@ export class FormTemplate {
   name: string;
   @Prop({ type: MongoSchema.Types.Map, of: MongoSchema.Types.String })
   validations: Map<string, string>;
+  @Prop({ required: false })
+  brevoContactListId?: number;
 }
 
 export const FormTemplateSchema = SchemaFactory.createForClass(FormTemplate);

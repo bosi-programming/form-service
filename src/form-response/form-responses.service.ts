@@ -56,14 +56,27 @@ export class FormResponseService {
     });
     const saveResult = await formResponse.save();
     if (
-      formTemplate._id.toString() === '68e28ccc1074ce6a5af51bf9' &&
+      !!formTemplate.brevoContactListId &&
       createFormResponseDto.formAnswers.email
     ) {
       try {
-        await brevoClient.contacts.createContact({
-          listIds: [5],
-          email: createFormResponseDto.formAnswers.email,
+        const contact = await brevoClient.contacts.getContactInfo({
+          identifierType: 'email_id',
+          identifier: createFormResponseDto.formAnswers.email,
         });
+        if (contact) {
+          await brevoClient.contacts.addContactToList({
+            listId: formTemplate.brevoContactListId,
+            body: {
+              emails: [createFormResponseDto.formAnswers.email],
+            },
+          });
+        } else {
+          await brevoClient.contacts.createContact({
+            listIds: [formTemplate.brevoContactListId],
+            email: createFormResponseDto.formAnswers.email,
+          });
+        }
       } catch (e) {
         throw new HttpException(
           {
