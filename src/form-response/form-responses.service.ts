@@ -59,11 +59,11 @@ export class FormResponseService {
       !!formTemplate.brevoContactListId &&
       createFormResponseDto.formAnswers.email
     ) {
+      const contact = await brevoClient.contacts.getContactInfo({
+        identifierType: 'email_id',
+        identifier: createFormResponseDto.formAnswers.email,
+      });
       try {
-        const contact = await brevoClient.contacts.getContactInfo({
-          identifierType: 'email_id',
-          identifier: createFormResponseDto.formAnswers.email,
-        });
         if (contact) {
           await brevoClient.contacts.addContactToList({
             listId: formTemplate.brevoContactListId,
