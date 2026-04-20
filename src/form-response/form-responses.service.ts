@@ -60,11 +60,9 @@ export class FormResponseService {
       createFormResponseDto.formAnswers.email
     ) {
       try {
-        await brevoClient.contacts.addContactToList({
-          listId: 5,
-          body: {
-            emails: [createFormResponseDto.formAnswers.email],
-          },
+        await brevoClient.contacts.createContact({
+          listIds: [5],
+          email: createFormResponseDto.formAnswers.email,
         });
       } catch (e) {
         throw new HttpException(
