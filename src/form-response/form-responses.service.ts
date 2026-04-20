@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { FormTemplateService } from 'src/form-template/form-template.service';
 import { formValidator } from 'src/validations/formValidator';
 import { Validators } from 'src/validations/types';
+import { brevoClient } from 'src/vendors/brevo';
 
 @Injectable()
 export class FormResponseService {
@@ -53,7 +54,20 @@ export class FormResponseService {
       ...createFormResponseDto,
       owner,
     });
-    return formResponse.save();
+    const saveResult = await formResponse.save();
+    if (formTemplate._id.toString() === '68e28ccc1074ce6a5af51bf9') {
+      try {
+        await brevoClient.contacts.addContactToList({
+          listId: 5,
+          body: {
+            emails: [formResponse.formAnswers.email],
+          },
+        });
+      } catch (e) {
+        throw new HttpException(e, HttpStatus.BAD_REQUEST);
+      }
+    }
+    return saveResult;
   }
 
   findAll(owner: string) {

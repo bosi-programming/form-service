@@ -3,3 +3,4 @@ export const CRYPT_MASTER_KEY = process.env.CRYPT_MASTER_KEY || 'test';
 export const PORT = process.env.PORT || 3000;
 export const DATABASE_USER = process.env.DATABASE_USER || 'root';
 export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || 'temp';
+export const BREVO_CLIENT = process.env.BREVO_KEY || 'temp';

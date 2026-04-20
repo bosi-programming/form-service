@@ -11,6 +11,8 @@ import { CatchEverythingFilter } from './filters/catch-everything.filter';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { DATABASE_PASSWORD, DATABASE_USER, JWT_SECRET } from './constants';
+import * as brevo from './vendors/brevo';
+brevo.brevoClient;
 
 @Module({
   imports: [
@@ -40,4 +42,4 @@ import { DATABASE_PASSWORD, DATABASE_USER, JWT_SECRET } from './constants';
     AppService,
   ],
 })
-export class AppModule {}
+export class AppModule { }
