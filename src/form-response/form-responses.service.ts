@@ -55,16 +55,27 @@ export class FormResponseService {
       owner,
     });
     const saveResult = await formResponse.save();
-    if (formTemplate._id.toString() === '68e28ccc1074ce6a5af51bf9') {
+    if (
+      formTemplate._id.toString() === '68e28ccc1074ce6a5af51bf9' &&
+      createFormResponseDto.formAnswers.email
+    ) {
       try {
         await brevoClient.contacts.addContactToList({
           listId: 5,
           body: {
-            emails: [formResponse.formAnswers.email],
+            emails: [createFormResponseDto.formAnswers.email],
           },
         });
       } catch (e) {
-        throw new HttpException(e, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          {
+            error: e as unknown,
+            body: {
+              emails: [createFormResponseDto.formAnswers.email],
+            },
+          },
+          HttpStatus.BAD_REQUEST,
+        );
       }
     }
     return saveResult;
