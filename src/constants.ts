@@ -4,3 +4,4 @@ export const PORT = process.env.PORT || 3000;
 export const DATABASE_USER = process.env.DATABASE_USER || 'root';
 export const DATABASE_PASSWORD = process.env.DATABASE_PASSWORD || 'temp';
 export const BREVO_CLIENT = process.env.BREVO_KEY || 'temp';
+export const MONGO_URL = process.env.MONGO_URL || 'mongodb://localhost:27017';
