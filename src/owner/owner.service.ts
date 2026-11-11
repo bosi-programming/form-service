@@ -3,9 +3,8 @@ import { Owner } from './entities/owner.entity';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { CreateOwnerDto } from './dto/create-owner.dto';
-import { encrypt } from '../auth/utils';
+import { hashPassword } from '../auth/password';
 import { JwtService } from '@nestjs/jwt';
-import { CRYPT_MASTER_KEY } from 'src/constants';
 
 @Injectable()
 export class OwnerService {
@@ -13,7 +12,7 @@ export class OwnerService {
     @InjectModel(Owner.name)
     private ownerModel: Model<Owner>,
     private jwtService: JwtService,
-  ) { }
+  ) {}
 
   async create(createOwnerDto: CreateOwnerDto) {
     const ownerWithSameName = await this.ownerModel.findOne({
@@ -25,13 +24,9 @@ export class OwnerService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    const encryptedPassword = encrypt(
-      createOwnerDto.password,
-      CRYPT_MASTER_KEY,
-    );
     const owner = new this.ownerModel({
       ...createOwnerDto,
-      password: encryptedPassword,
+      password: await hashPassword(createOwnerDto.password),
     });
     const responderToken = await this.jwtService.signAsync(
       {

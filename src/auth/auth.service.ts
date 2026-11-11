@@ -7,8 +7,7 @@ import {
 import { JwtService } from '@nestjs/jwt';
 import { OwnerService } from '../owner/owner.service';
 import { OwnerDocument } from '../owner/entities/owner.entity';
-import { decrypt } from './utils';
-import { CRYPT_MASTER_KEY } from 'src/constants';
+import { verifyPassword } from './password';
 
 @Injectable()
 export class AuthService {
@@ -19,7 +18,7 @@ export class AuthService {
 
   async signIn(name: string, pass: string): Promise<{ access_token: string }> {
     const owner = await this.ownerService.findByName(name);
-    if (!owner || decrypt(owner.password, CRYPT_MASTER_KEY) !== pass) {
+    if (!owner || !(await verifyPassword(owner.password, pass))) {
       throw new UnauthorizedException();
     }
     const payload = { owner: owner._id, name: owner.name, level: 'owner' };
@@ -28,7 +27,7 @@ export class AuthService {
     };
   }
 
-  validatePassword(owner: OwnerDocument, password: string) {
+  async validatePassword(owner: OwnerDocument, password: string) {
     if (!password) {
       throw new HttpException(
         'Please write a password',
@@ -36,9 +35,7 @@ export class AuthService {
       );
     }
 
-    const decriptedPassword = decrypt(owner.password, CRYPT_MASTER_KEY);
-
-    if (password !== decriptedPassword) {
+    if (!(await verifyPassword(owner.password, password))) {
       throw new HttpException(
         'Please write a password',
         HttpStatus.BAD_REQUEST,
