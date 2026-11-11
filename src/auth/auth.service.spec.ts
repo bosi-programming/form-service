@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
-import { UnauthorizedException } from '@nestjs/common';
+import { HttpException, UnauthorizedException } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
-import { encrypt } from './utils';
+import { hashPassword } from './password';
 import { OwnerService } from '../owner/owner.service';
-import { CRYPT_MASTER_KEY, JWT_SECRET } from 'src/constants';
+import { OwnerDocument } from '../owner/entities/owner.entity';
+import { JWT_SECRET } from 'src/constants';
 
 const jwtService = new JwtService({
   secret: JWT_SECRET,
@@ -16,16 +17,18 @@ const token = jwtService.sign({
   name,
   level: 'responder',
 });
-const mockOwnerModule = {
-  findByName: jest.fn().mockResolvedValue({
-    _id: owner,
-    responderToken: token,
-    password: encrypt('1234', CRYPT_MASTER_KEY),
-  }),
-};
 
-describe('ResponderGuard', () => {
+describe('AuthService', () => {
   let authService: AuthService;
+  let storedOwner: { _id: string; responderToken: string; password: string };
+
+  beforeAll(async () => {
+    storedOwner = {
+      _id: owner,
+      responderToken: token,
+      password: await hashPassword('1234'),
+    };
+  });
 
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
@@ -39,24 +42,43 @@ describe('ResponderGuard', () => {
         AuthService,
         {
           provide: OwnerService,
-          useValue: mockOwnerModule,
+          useValue: {
+            findByName: jest.fn().mockResolvedValue(storedOwner),
+          },
         },
       ],
     }).compile();
     authService = moduleRef.get<AuthService>(AuthService);
   });
 
-  it('should deny access', async () => {
-    try {
-      await authService.signIn(name, 'wrong-pass');
-    } catch (e) {
-      expect(e instanceof UnauthorizedException).toBe(true);
-    }
+  it('should deny access with a wrong password', async () => {
+    await expect(authService.signIn(name, 'wrong-pass')).rejects.toThrow(
+      UnauthorizedException,
+    );
   });
-  it('should give access', async () => {
+
+  it('should give access with the right password', async () => {
     expect(await authService.signIn(name, '1234')).toStrictEqual(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       expect.objectContaining({ access_token: expect.any(String) }),
     );
+  });
+
+  it('should accept the right password in validatePassword', async () => {
+    await expect(
+      authService.validatePassword(
+        storedOwner as unknown as OwnerDocument,
+        '1234',
+      ),
+    ).resolves.toBeUndefined();
+  });
+
+  it('should reject a wrong password in validatePassword', async () => {
+    await expect(
+      authService.validatePassword(
+        storedOwner as unknown as OwnerDocument,
+        'wrong',
+      ),
+    ).rejects.toThrow(HttpException);
   });
 });
