@@ -21,7 +21,7 @@ describe('password', () => {
     expect(await verifyPassword('not-a-hash', 'not-a-hash')).toBe(false);
   });
 
-  it('should tell hashes from legacy encrypted values', async () => {
+  it('should tell hashes from values that are not hashes', async () => {
     expect(isHashed(await hashPassword('x'))).toBe(true);
     expect(isHashed('c2FsdGl2dGFnZW5j')).toBe(false);
   });

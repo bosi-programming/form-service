@@ -1,7 +1,7 @@
 type Constants = typeof import('./constants');
 
-const SECRETS = ['JWT_SECRET', 'CRYPT_MASTER_KEY', 'DATABASE_PASSWORD'];
-const TOUCHED = ['MONGO_URL', 'NODE_ENV', ...SECRETS];
+const SECRETS = ['JWT_SECRET', 'DATABASE_PASSWORD'];
+const TOUCHED = ['MONGO_URL', 'NODE_ENV', 'CRYPT_MASTER_KEY', ...SECRETS];
 
 function loadConstants(): Constants {
   let constants: Constants | undefined;
@@ -41,7 +41,6 @@ describe('constants', () => {
     SECRETS.forEach((name) => delete process.env[name]);
     const constants = loadConstants();
     expect(constants.JWT_SECRET).toBe('test');
-    expect(constants.CRYPT_MASTER_KEY).toBe('test');
     expect(constants.DATABASE_PASSWORD).toBe('temp');
   });
 
@@ -55,12 +54,19 @@ describe('constants', () => {
     },
   );
 
+  it('should start in production without CRYPT_MASTER_KEY', () => {
+    process.env.NODE_ENV = 'production';
+    SECRETS.forEach((name) => (process.env[name] = 'set'));
+    delete process.env.CRYPT_MASTER_KEY;
+    const constants = loadConstants();
+    expect(constants).not.toHaveProperty('CRYPT_MASTER_KEY');
+  });
+
   it('should read the secrets in production when they are set', () => {
     process.env.NODE_ENV = 'production';
     SECRETS.forEach((name) => (process.env[name] = `${name}-value`));
     const constants = loadConstants();
     expect(constants.JWT_SECRET).toBe('JWT_SECRET-value');
-    expect(constants.CRYPT_MASTER_KEY).toBe('CRYPT_MASTER_KEY-value');
     expect(constants.DATABASE_PASSWORD).toBe('DATABASE_PASSWORD-value');
   });
 });
