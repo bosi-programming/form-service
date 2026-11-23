@@ -10,7 +10,6 @@ function secret(name: string, developmentDefault: string): string {
 }
 
 export const JWT_SECRET = secret('JWT_SECRET', 'test');
-export const CRYPT_MASTER_KEY = secret('CRYPT_MASTER_KEY', 'test');
 export const PORT = process.env.PORT || 3000;
 export const DATABASE_USER = process.env.DATABASE_USER || 'root';
 export const DATABASE_PASSWORD = secret('DATABASE_PASSWORD', 'temp');
