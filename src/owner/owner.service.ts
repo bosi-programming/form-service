@@ -15,6 +15,12 @@ export class OwnerService {
   ) {}
 
   async create(createOwnerDto: CreateOwnerDto) {
+    if (typeof createOwnerDto.name !== 'string') {
+      throw new HttpException(
+        'Invalid name, try again with a different name',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const ownerWithSameName = await this.ownerModel.findOne({
       name: createOwnerDto.name,
     });
@@ -50,9 +56,21 @@ export class OwnerService {
   }
 
   findById(id: string) {
+    if (typeof id !== 'string') {
+      throw new HttpException(
+        'Invalid id, try again with a different id',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.ownerModel.findById(id);
   }
   findByName(name: string) {
+    if (typeof name !== 'string') {
+      throw new HttpException(
+        'Invalid name, try again with a different name',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.ownerModel.findOne({ name });
   }
 }

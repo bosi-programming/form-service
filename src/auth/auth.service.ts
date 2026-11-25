@@ -17,6 +17,9 @@ export class AuthService {
   ) {}
 
   async signIn(name: string, pass: string): Promise<{ access_token: string }> {
+    if (typeof name !== 'string' || typeof pass !== 'string') {
+      throw new UnauthorizedException();
+    }
     const owner = await this.ownerService.findByName(name);
     if (!owner || !(await verifyPassword(owner.password, pass))) {
       throw new UnauthorizedException();

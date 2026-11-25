@@ -17,7 +17,9 @@ import {
   MONGO_URL,
 } from './constants';
 import * as brevo from './vendors/brevo';
+import mongoose from 'mongoose';
 brevo.brevoClient;
+mongoose.set('sanitizeFilter', true);
 
 @Module({
   imports: [

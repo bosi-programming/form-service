@@ -8,6 +8,7 @@ import { FormTemplateService } from 'src/form-template/form-template.service';
 import { formValidator } from 'src/validations/formValidator';
 import { Validators } from 'src/validations/types';
 import { brevoClient } from 'src/vendors/brevo';
+import { cleanInput } from 'src/utils/cleanInput';
 
 @Injectable()
 export class FormResponseService {
@@ -17,8 +18,11 @@ export class FormResponseService {
     private formTemplateService: FormTemplateService,
   ) { }
   async create(createFormResponseDto: CreateFormResponseDto, owner: string) {
+    if (typeof createFormResponseDto.formTemplate !== 'string') {
+      throw new HttpException('Wrong form response', HttpStatus.BAD_REQUEST);
+    }
     const formTemplate = await this.formTemplateService.findOne(
-      createFormResponseDto.formTemplate,
+      cleanInput<string>(createFormResponseDto.formTemplate),
       owner,
     );
     if (!formTemplate) {
@@ -96,10 +100,22 @@ export class FormResponseService {
   }
 
   findAll(owner: string) {
+    if (typeof owner !== 'string') {
+      throw new HttpException(
+        'Invalid data, try again with a different data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.formResponseModel.find({ owner });
   }
 
   findOne(id: string, owner: string) {
+    if (typeof id !== 'string' || typeof owner !== 'string') {
+      throw new HttpException(
+        'Invalid data, try again with a different data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     return this.formResponseModel.findOne({ _id: id, owner });
   }
 
@@ -108,6 +124,12 @@ export class FormResponseService {
     updateFormResponseDto: UpdateFormResponseDto,
     owner: string,
   ) {
+    if (typeof id !== 'string' || typeof owner !== 'string') {
+      throw new HttpException(
+        'Invalid data, try again with a different data',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
     const currentFormResponse = await this.formResponseModel.findOne({
       _id: id,
       owner,
